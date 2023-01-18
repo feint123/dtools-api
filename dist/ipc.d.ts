@@ -2,25 +2,29 @@ export declare class DToolsIPC {
     window: Window;
     channel: MessageChannel;
     port1: MessagePort;
+    eventMap: Map<string, Function>;
     constructor(window: Window);
     /**
      *  发送初始化消息，建立连接。
      */
     init(): void;
-    send(message: any): void;
-    callback(fn: (event: MessageEvent) => void): void;
+    send(message: DToolsRequest<any>): string;
+    callback(fn: (event: MessageEvent) => void, messageId: string): void;
+    static messageId(): string;
 }
 export declare class DToolsRequest<T> {
     api: string;
     fn: string;
+    messageId: string;
     params: T;
     constructor(api: string, fn: string, params: T);
 }
 export declare class DToolsResponse<T> {
     success: boolean;
     message: string;
+    messageId: string;
     data: T;
-    constructor(message: string, success: boolean, data: T);
+    constructor(messageId: string, message: string, success: boolean, data: T);
 }
 declare class DToolsPluginInfo {
     pluginId: string;

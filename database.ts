@@ -1,4 +1,4 @@
-import {DToolsRequest, DToolsResponse} from './ipc';
+import { DToolsIPC, DToolsRequest, DToolsResponse } from './ipc';
 
 const API_SQL = 'sql';
 
@@ -7,25 +7,25 @@ class Database {
     constructor(path: string) {
         this.path = path;
     }
-    set id(id : string) {
-        this.id = id;
-    }
-    get id() {
-        return this.id;
-    }
-    
+    // set id(id_ : string) {
+    //     this.id = id_;
+    // }
+    // get id() {
+    //     return this.id;
+    // }
+
     static load(path: string): Promise<Database> {
         return new Promise<Database>((resolve, reject) => {
-            window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "load", new SqlLoadRequest(path)));
+            const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "load", new SqlLoadRequest(path)));
             window.__DTOOLS_IPC__.callback((event: MessageEvent<DToolsResponse<SqlLoadData>>) => {
-                if(event.data.success) {
+                if (event.data.success) {
                     const database = new Database(path);
-                    database.id = event.data.data.databaseId;
+                    // database.id = event.data.data.databaseId;
                     resolve(database);
                 } else {
                     reject(event.data.message);
                 }
-            });
+            }, messageId);
         });
     }
 
@@ -41,14 +41,14 @@ class Database {
      */
     execute(query: string, bindValues?: unknown[]): Promise<QueryResult> {
         return new Promise<QueryResult>((resolve, reject) => {
-            window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "execute", new SqlExecuteRequest(this.path, query, bindValues)));
+            const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "execute", new SqlExecuteRequest(this.path, query, bindValues)));
             window.__DTOOLS_IPC__.callback((event: MessageEvent<DToolsResponse<SqlExecuteData>>) => {
-                if(event.data.success) {
-                    resolve({lastInsertId: event.data.data.lastInsertId, rowsAffected: event.data.data.rowsAffected});
+                if (event.data.success) {
+                    resolve({ lastInsertId: event.data.data.lastInsertId, rowsAffected: event.data.data.rowsAffected });
                 } else {
                     reject(event.data.message);
                 }
-            });
+            }, messageId);
         });
     }
 
@@ -59,32 +59,32 @@ class Database {
      */
     select<T>(query: string, bindValues?: unknown[]): Promise<T> {
         return new Promise<T>((resolve, reject) => {
-            window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "select", new SqlExecuteRequest(this.path, query, bindValues)))
-            window.__DTOOLS_IPC__.callback((event: MessageEvent<DToolsResponse<T>>) => {
+            const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "select", new SqlExecuteRequest(this.path, query, bindValues)))
+            window.__DTOOLS_IPC__.callback((event: MessageEvent<DToolsResponse<any>>) => {
                 if (event.data.success) {
                     resolve(event.data.data);
-                } else {    
+                } else {
                     reject(event.data.message);
                 }
-            })
+            }, messageId)
         });
 
     }
-  
+
     /**
      * 关闭数据库链接
      * @param db 
      */
     close(db?: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "close",  {db: db}))
+            const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "close", { db: db }))
             window.__DTOOLS_IPC__.callback((event: MessageEvent<DToolsResponse<boolean>>) => {
                 if (event.data.success) {
                     resolve(event.data.data);
-                } else {    
+                } else {
                     reject(event.data.message);
                 }
-            })
+            }, messageId)
         });
     }
 }
@@ -110,14 +110,14 @@ export class SqlExecuteRequest {
 /**
  * 加载 database 的响应类
  */
-export class SqlLoadData{
+export class SqlLoadData {
     databaseId: string;
     constructor(databaseId: string) {
         this.databaseId = databaseId;
     }
 }
 
-export class SqlExecuteData implements QueryResult{
+export class SqlExecuteData implements QueryResult {
     rowsAffected: number;
     lastInsertId: number;
 

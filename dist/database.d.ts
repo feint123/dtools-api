@@ -1,8 +1,6 @@
 declare class Database {
     path: string;
     constructor(path: string);
-    set id(id: string);
-    get id(): string;
     static load(path: string): Promise<Database>;
     static get(path: string): Database;
     /**

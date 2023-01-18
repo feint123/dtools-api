@@ -5,25 +5,25 @@ class Database {
     constructor(path) {
         this.path = path;
     }
-    set id(id) {
-        this.id = id;
-    }
-    get id() {
-        return this.id;
-    }
+    // set id(id_ : string) {
+    //     this.id = id_;
+    // }
+    // get id() {
+    //     return this.id;
+    // }
     static load(path) {
         return new Promise((resolve, reject) => {
-            window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "load", new SqlLoadRequest(path)));
+            const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "load", new SqlLoadRequest(path)));
             window.__DTOOLS_IPC__.callback((event) => {
                 if (event.data.success) {
                     const database = new Database(path);
-                    database.id = event.data.data.databaseId;
+                    // database.id = event.data.data.databaseId;
                     resolve(database);
                 }
                 else {
                     reject(event.data.message);
                 }
-            });
+            }, messageId);
         });
     }
     static get(path) {
@@ -37,15 +37,16 @@ class Database {
      */
     execute(query, bindValues) {
         return new Promise((resolve, reject) => {
-            window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "execute", new SqlExecuteRequest(this.path, query, bindValues)));
+            const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "execute", new SqlExecuteRequest(this.path, query, bindValues)));
             window.__DTOOLS_IPC__.callback((event) => {
+                console.log('execute-event', event);
                 if (event.data.success) {
                     resolve({ lastInsertId: event.data.data.lastInsertId, rowsAffected: event.data.data.rowsAffected });
                 }
                 else {
                     reject(event.data.message);
                 }
-            });
+            }, messageId);
         });
     }
     /**
@@ -55,15 +56,16 @@ class Database {
      */
     select(query, bindValues) {
         return new Promise((resolve, reject) => {
-            window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "select", new SqlExecuteRequest(this.path, query, bindValues)));
+            const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "select", new SqlExecuteRequest(this.path, query, bindValues)));
             window.__DTOOLS_IPC__.callback((event) => {
+                console.log('select-event', event);
                 if (event.data.success) {
                     resolve(event.data.data);
                 }
                 else {
                     reject(event.data.message);
                 }
-            });
+            }, messageId);
         });
     }
     /**
@@ -72,7 +74,7 @@ class Database {
      */
     close(db) {
         return new Promise((resolve, reject) => {
-            window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "close", { db: db }));
+            const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "close", { db: db }));
             window.__DTOOLS_IPC__.callback((event) => {
                 if (event.data.success) {
                     resolve(event.data.data);
@@ -80,7 +82,7 @@ class Database {
                 else {
                     reject(event.data.message);
                 }
-            });
+            }, messageId);
         });
     }
 }
