@@ -1,0 +1,30 @@
+{
+  "name": "dtools-api",
+  "version": "1.0.0",
+  "description": "a api set for dtools plugins",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./db": {
+      "import": "./dist/database.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "dtools",
+    "api",
+    "ts"
+  ],
+  "author": "feint",
+  "license": "MIT",
+  "dependencies": {
+  }
+}
