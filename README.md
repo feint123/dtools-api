@@ -4,7 +4,7 @@ a api set for dtools plugins
 api开发进度
 
 - [x] sql
-- [ ] clipboard
+- [x] clipboard
 - [ ] dialog
 - [ ] event
 - [ ] fs
