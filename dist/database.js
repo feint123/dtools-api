@@ -39,7 +39,6 @@ class Database {
         return new Promise((resolve, reject) => {
             const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "execute", new SqlExecuteRequest(this.path, query, bindValues)));
             window.__DTOOLS_IPC__.callback((event) => {
-                console.log('execute-event', event);
                 if (event.data.success) {
                     resolve({ lastInsertId: event.data.data.lastInsertId, rowsAffected: event.data.data.rowsAffected });
                 }
@@ -58,7 +57,6 @@ class Database {
         return new Promise((resolve, reject) => {
             const messageId = window.__DTOOLS_IPC__.send(new DToolsRequest(API_SQL, "select", new SqlExecuteRequest(this.path, query, bindValues)));
             window.__DTOOLS_IPC__.callback((event) => {
-                console.log('select-event', event);
                 if (event.data.success) {
                     resolve(event.data.data);
                 }

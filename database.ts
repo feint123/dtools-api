@@ -1,4 +1,4 @@
-import { DToolsIPC, DToolsRequest, DToolsResponse } from './ipc';
+import { DToolsRequest, DToolsResponse } from './ipc';
 
 const API_SQL = 'sql';
 
