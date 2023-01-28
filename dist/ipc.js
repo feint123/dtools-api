@@ -60,6 +60,10 @@ export class DToolsResponse {
         this.messageId = messageId;
     }
 }
+export function convertFileSrc(filePath, protocol = "asset") {
+    let n = encodeURIComponent(filePath);
+    return navigator.userAgent.includes("Windows") ? `https://${protocol}.localhost/${n}` : `${protocol}://localhost/${n}`;
+}
 class DToolsPluginInfo {
     pluginId;
     constructor(pluginId) {

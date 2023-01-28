@@ -26,6 +26,7 @@ export declare class DToolsResponse<T> {
     data: T;
     constructor(messageId: string, message: string, success: boolean, data: T);
 }
+export declare function convertFileSrc(filePath: string, protocol?: string): string;
 declare class DToolsPluginInfo {
     pluginId: string;
     constructor(pluginId: string);

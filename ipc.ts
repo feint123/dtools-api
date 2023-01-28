@@ -68,6 +68,11 @@ export class DToolsResponse<T> {
     }
 }
 
+export function convertFileSrc(filePath: string, protocol: string = "asset"): string {
+    let n=encodeURIComponent(filePath);
+    return navigator.userAgent.includes("Windows")?`https://${protocol}.localhost/${n}`:`${protocol}://localhost/${n}`
+}
+
 class DToolsPluginInfo {
     pluginId: string;
 
